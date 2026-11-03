@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq;
-using System.Text;
 using Virinco.WATS.Interface;
 using System.IO;
 
@@ -11,11 +8,13 @@ namespace XMLConverter
     [TestClass]
     public class ConverterTests : TDM
     {
+        // disable this test if you don't want to run it, or if you don't have a WATS server to connect to
+        [Ignore]
         [TestMethod]
         public void SetupClient()
         {
             SetupAPI(null, "", "Test", true);
-            RegisterClient("your wats", "username", "password");
+            RegisterClient("https://trimble.wats.com", "username", "password");
             InitializeAPI(true);
         }
 

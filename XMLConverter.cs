@@ -14,7 +14,7 @@ namespace XMLConverter
         IDictionary<string, string> arguments; //Save a copy of arguments from Converters.xml
         public XMLConverter(IDictionary<string, string> args)
         {
-            arguments = args; //The constructior is called once when client is started
+            arguments = args; //The constructor is called once when client is started
         }
 
         public Report ImportReport(TDM api, Stream file)
