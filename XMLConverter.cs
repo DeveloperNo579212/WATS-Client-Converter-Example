@@ -13,32 +13,37 @@ namespace XMLConverter
 
         IDictionary<string, string> arguments; //Save a copy of arguments from Converters.xml
 
-        public Dictionary<string, string> ConverterParameters => new Dictionary<string, string>
+        const string DefaultSequenceFile = "XMLSequence";
+
+        public Dictionary<string, string> ConverterParameters { get; } = new Dictionary<string, string>
         {
-            { "sequenceFile", "XMLSequence" } // default value, adjust as needed
+            { "sequenceFile", DefaultSequenceFile }
         };
+
+        readonly string sequenceFile;
 
         public XMLConverter(IDictionary<string, string> args)
         {
             arguments = args; //The constructor is called once when client is started
+            sequenceFile = args != null && args.TryGetValue("sequenceFile", out var sf) && !string.IsNullOrEmpty(sf) ? sf : DefaultSequenceFile;
         }
 
         public Report ImportReport(TDM api, Stream file)
         {
-            using (TextReader r = new StreamReader(file))
+            // The stream is owned by the WATS Client and must not be disposed
+            XDocument report = XDocument.Load(file);
             {
-                XDocument report = XDocument.Load(r);
-                XElement testreport = report.Element("TestReport");
-                XElement header = testreport.Element("Header");
+                XElement testreport = report.Element("TestReport") ?? throw new InvalidDataException("Missing element: TestReport");
+                XElement header = testreport.Element("Header") ?? throw new InvalidDataException("Missing element: Header");
                 UUTReport uut = api.CreateUUTReport(
-                    header.Element("Operator").Value,
-                    header.Element("PartNumber").Value,
-                    header.Element("Revision").Value,
-                    header.Element("SerialNumber").Value,
-                    header.Element("OperationTypeCode").Value,
-                    arguments["sequenceFile"], "1.0");
-                uut.StartDateTime = DateTime.ParseExact(header.Element("StartDate").Value, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
-                uut.ExecutionTime = double.Parse(header.Element("ExecutionTime").Value, CultureInfo.InvariantCulture);
+                    HeaderValue(header, "Operator"),
+                    HeaderValue(header, "PartNumber"),
+                    HeaderValue(header, "Revision"),
+                    HeaderValue(header, "SerialNumber"),
+                    HeaderValue(header, "OperationTypeCode"),
+                    sequenceFile, "1.0");
+                uut.StartDateTime = DateTime.ParseExact(HeaderValue(header, "StartDate"), "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+                uut.ExecutionTime = double.Parse(HeaderValue(header, "ExecutionTime"), CultureInfo.InvariantCulture);
                 foreach (var sequence in testreport.Elements("Sequence"))
                 {
                     SequenceCall s = uut.GetRootSequenceCall().AddSequenceCall(sequence.Attribute("Name").Value);
@@ -60,6 +65,10 @@ namespace XMLConverter
                 }
                 return uut;
             }
+        }
+        static string HeaderValue(XElement header, string name)
+        {
+            return header.Element(name)?.Value ?? throw new InvalidDataException("Missing header element: " + name);
         }
         double GetValue(XElement x, string name)
         {

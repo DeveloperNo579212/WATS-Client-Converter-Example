@@ -49,6 +49,7 @@
   <ItemGroup>
     <PackageReference Include="WATS.Client">
       <Version>6.1.134</Version>
+      <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

@@ -8,7 +8,7 @@ This project is an example of how you can create a custom converter reading a cu
 
 * [About WATS](https://wats.com/manufacturing-intelligence/)
 * [About submitting data to WATS](https://virinco.zendesk.com/hc/en-us/articles/207424613)
-* [About creating custom converters](https://virinco.zendesk.com/hc/en-us/articles/207424593)
+* [About creating custom converters](https://support.wats.com/hc/en-us/articles/207424593)
 
 ## Parameters
 
@@ -16,7 +16,7 @@ This converter uses the following parameters:
 
 | Parameter    | Default value | Description                                                  |
 |--------------|---------------|--------------------------------------------------------------|
-| sequenceFile |               | The name of the sequence file used to generate the XML file. |
+| sequenceFile | XMLSequence   | The name of the sequence file used to generate the XML file. |
 
 ## Testing
 
@@ -26,8 +26,8 @@ It is setup with two tests; one for setting up the API by registering the client
 
 The values are hardcoded in the test, so you will need to change the values to reflect your setup.
 * In SetupClient, fill in your information in the the call to RegisterClient.
-* In TestConverter, fill in the path to the file you want to test the converter with. There are example files in the Examples folder.
-* Run SetupClient once, then you can run TestConverter as many times as you want.
+* TestXMLConverter parses `Examples\XMLReport.xml` and asserts on the resulting report; change the file to test other input.
+* Run SetupClient once (remove its `[Ignore]`), then you can run TestXMLConverter as many times as you want.
 
 Note that the start date in the example files are going to be old, so in WATS you will have to set the From Date filter to see the report in Test Reports.
 
@@ -40,4 +40,4 @@ Note that the start date in the example files are going to be old, so in WATS yo
 
 ## License
 
-This project is licensed under the [LGPLv3](COPYING.LESSER) which is an extention of the [GPLv3](COPYING).
+This project is licensed under the terms in [LICENSE.md](LICENSE.md).

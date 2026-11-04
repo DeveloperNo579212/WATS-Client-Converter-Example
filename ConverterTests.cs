@@ -27,7 +27,11 @@ namespace XMLConverter
             using (var file = new FileStream(@"Examples\XMLReport.xml", FileMode.Open))
             {
                 var report = converter.ImportReport(this, file);
-                Submit(report);
+                Assert.IsNotNull(report);
+                var uut = report as UUTReport;
+                Assert.IsNotNull(uut);
+                Assert.AreEqual("12345", uut.SerialNumber);
+                Assert.AreEqual("Part1", uut.PartNumber);
             }            
         }
     }
