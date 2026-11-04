@@ -7,11 +7,17 @@ using Virinco.WATS.Interface;
 
 namespace XMLConverter
 {
-    public class XMLConverter : IReportConverter
+    public class XMLConverter : IReportConverter_v2
     {
         public void CleanUp(){} //Nothing to cleanup here
 
         IDictionary<string, string> arguments; //Save a copy of arguments from Converters.xml
+
+        public Dictionary<string, string> ConverterParameters => new Dictionary<string, string>
+        {
+            { "sequenceFile", "XMLSequence" } // default value, adjust as needed
+        };
+
         public XMLConverter(IDictionary<string, string> args)
         {
             arguments = args; //The constructor is called once when client is started
